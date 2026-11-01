@@ -40,7 +40,7 @@ internal sealed class MainForm : Form
     private ToolStripMenuItem _backItem = null!;
     private ToolStripMenuItem _forwardItem = null!;
 
-    private readonly System.Windows.Forms.Timer _statusTimer = new() { Interval = 3200 };
+    private readonly Timer _statusTimer = new() { Interval = 3200 };
     private bool _webReady;
     private bool _exiting;
 
