@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key>
+	<string>ScheutieOS</string>
+	<key>CFBundleDisplayName</key>
+	<string>ScheutieOS</string>
+	<key>CFBundleExecutable</key>
+	<string>ScheutieOS</string>
+	<key>CFBundleIdentifier</key>
+	<string>local.workbuddy.scheutieos</string>
+	<!-- @@ICON@@ is replaced at build time with a content-hashed icns name,
+	     which is what busts the (root-owned) system icon cache on every change. -->
+	<key>CFBundleIconFile</key>
+	<string>@@ICON@@</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>8.4.2</string>
+	<key>CFBundleVersion</key>
+	<string>842</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>zh_CN</string>
+	<key>CFBundleGetInfoString</key>
+	<string>A quick launcher for DeepSeek</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>© 2026 Lynne Scheutie &amp; Wanchen Qian</string>
+</dict>
+</plist>

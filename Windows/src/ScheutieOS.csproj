@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <!-- Lets the project restore even on non-Windows build agents (harmless). -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+
+    <AssemblyName>ScheutieOS</AssemblyName>
+    <RootNamespace>ScheutieOS</RootNamespace>
+
+    <AssemblyVersion>8.4.1</AssemblyVersion>
+    <FileVersion>8.4.1</FileVersion>
+    <InformationalVersion>8.4.1</InformationalVersion>
+    <Product>ScheutieOS</Product>
+    <AssemblyTitle>A quick launcher for DeepSeek</AssemblyTitle>
+    <Description>A quick launcher for DeepSeek</Description>
+    <Company>Lynne Scheutie &amp; Wanchen Qian</Company>
+    <Copyright>© 2026 Lynne Scheutie &amp; Wanchen Qian</Copyright>
+
+    <ApplicationIcon>..\assets\AppIcon.ico</ApplicationIcon>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The multi-resolution icon is also embedded as a managed resource so the
+         tray icon / About window can pick real 16/32/256px variants. -->
+    <EmbeddedResource Include="..\assets\AppIcon.ico" LogicalName="ScheutieOS.AppIcon.ico" />
+  </ItemGroup>
+
+</Project>

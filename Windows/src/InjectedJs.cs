@@ -1,0 +1,304 @@
+// InjectedJs.cs — the enhancement runtime injected into every page load.
+// Ported verbatim from the macOS build (Enhance.swift). Provides:
+//   __scheutieApplyCSS(css)         — CSP-proof CSS injection
+//   __scheutieExportMarkdown()      — conversation -> Markdown
+
+namespace ScheutieOS;
+
+internal static class InjectedJs
+{
+    public const string Runtime = """
+    (function () {
+      if (window.__scheutieInstalled) { return; }
+      window.__scheutieInstalled = true;
+
+      // ---------- CSS injection (CSP-proof: constructed stylesheet first) ----------
+      function sheet() {
+        try {
+          if (!window.__scheutieSheet && 'adoptedStyleSheets' in document) {
+            window.__scheutieSheet = new CSSStyleSheet();
+            document.adoptedStyleSheets = document.adoptedStyleSheets.concat([window.__scheutieSheet]);
+          }
+        } catch (e) { window.__scheutieSheet = null; }
+        return window.__scheutieSheet || null;
+      }
+
+      window.__scheutieApplyCSS = function (css) {
+        css = css || '';
+        var s = sheet();
+        if (s) {
+          try { s.replaceSync(css); return 'adopted'; } catch (e) { }
+        }
+        try {
+          var el = document.getElementById('__scheutie_style');
+          if (!el) {
+            el = document.createElement('style');
+            el.id = '__scheutie_style';
+            (document.head || document.documentElement).appendChild(el);
+          }
+          el.textContent = css;
+          return 'inline';
+        } catch (e) { return 'failed: ' + e.message; }
+      };
+
+      // ---------- Markdown export ----------
+      function tagOf(el) { return (el.tagName || '').toLowerCase(); }
+
+      function textOf(el) {
+        if (!el) { return ''; }
+        if (typeof el.innerText === 'string') { return el.innerText; }
+        return el.textContent || '';
+      }
+
+      var SKIP = { script: 1, style: 1, noscript: 1, svg: 1, button: 1, select: 1, textarea: 1, iframe: 1, canvas: 1 };
+      var BLOCK = { p: 1, div: 1, section: 1, article: 1, main: 1, ul: 1, ol: 1, li: 1, table: 1,
+                    thead: 1, tbody: 1, tr: 1, td: 1, th: 1, pre: 1, blockquote: 1, header: 1,
+                    footer: 1, aside: 1, nav: 1, figure: 1, figcaption: 1, h1: 1, h2: 1, h3: 1,
+                    h4: 1, h5: 1, h6: 1, hr: 1, form: 1 };
+
+      function clean(s) {
+        return (s || '')
+          .replace(/[ \t\u00a0]+/g, ' ')
+          .replace(/[ ]+\n/g, '\n')
+          .trim();
+      }
+
+      function hasBlockChild(el) {
+        var kids = el.children || [];
+        for (var i = 0; i < kids.length; i++) {
+          if (BLOCK[tagOf(kids[i])]) { return true; }
+        }
+        return false;
+      }
+
+      function inline(el) {
+        var out = '';
+        var kids = el.childNodes;
+        for (var i = 0; i < kids.length; i++) {
+          var n = kids[i];
+          if (n.nodeType === 3) { out += n.nodeValue; continue; }
+          if (n.nodeType !== 1) { continue; }
+          var t = tagOf(n);
+          if (SKIP[t]) { continue; }
+          if (n.getAttribute && n.getAttribute('aria-hidden') === 'true') { continue; }
+          if (t === 'br') { out += '\n'; continue; }
+          if (n.getAttribute && n.getAttribute('data-url') && !textOf(n).trim()) { continue; }
+          if (t === 'strong' || t === 'b') {
+            var a = clean(inline(n)); if (a) { out += '**' + a.replace(/\n/g, ' ') + '**'; } continue;
+          }
+          if (t === 'em' || t === 'i') {
+            var b = clean(inline(n)); if (b) { out += '*' + b.replace(/\n/g, ' ') + '*'; } continue;
+          }
+          if (t === 'del' || t === 's') {
+            var c = clean(inline(n)); if (c) { out += '~~' + c.replace(/\n/g, ' ') + '~~'; } continue;
+          }
+          if (t === 'code') {
+            var d = clean(textOf(n));
+            if (d) { out += '`' + d.replace(/\n/g, ' ') + '`'; } continue;
+          }
+          if (t === 'a') {
+            var href = n.getAttribute('href') || '';
+            var tx = clean(inline(n)).replace(/\n/g, ' ');
+            if (!tx) { continue; }
+            out += (href && href.indexOf('javascript:') !== 0) ? '[' + tx + '](' + href + ')' : tx;
+            continue;
+          }
+          out += inline(n);
+        }
+        return out;
+      }
+
+      function walk(node, out, depth) {
+        var kids = node.childNodes;
+        for (var i = 0; i < kids.length; i++) {
+          var n = kids[i];
+          if (n.nodeType === 3) {
+            var tt = clean(n.nodeValue);
+            if (tt) { out.push(tt); }
+            continue;
+          }
+          if (n.nodeType !== 1) { continue; }
+          var t = tagOf(n);
+          if (SKIP[t]) { continue; }
+          if (n.getAttribute && n.getAttribute('aria-hidden') === 'true') { continue; }
+          if (n.getAttribute && n.getAttribute('role') === 'toolbar') { continue; }
+
+          if (t === 'br') { out.push('\n'); continue; }
+          if (t === 'hr') { out.push('\n---\n'); continue; }
+
+          if (/^h[1-6]$/.test(t)) {
+            var lv = parseInt(t.slice(1), 10);
+            var ht = clean(inline(n)).replace(/\n/g, ' ');
+            if (ht) { out.push('\n' + new Array(lv + 1).join('#') + ' ' + ht + '\n'); }
+            continue;
+          }
+
+          if (t === 'pre') {
+            var cEl = n.querySelector('code');
+            var cls = (cEl && cEl.className) ? String(cEl.className) : '';
+            var m = cls.match(/language-([\w+#.-]+)/i);
+            var lang = m ? m[1] : '';
+            var code = textOf(cEl || n).replace(/\s+$/, '');
+            if (code.trim()) { out.push('\n```' + lang + '\n' + code + '\n```\n'); }
+            continue;
+          }
+
+          if (t === 'blockquote') {
+            var bt = clean(inline(n));
+            if (bt) {
+              out.push('\n' + bt.split('\n').map(function (x) { return '> ' + x; }).join('\n') + '\n');
+            }
+            continue;
+          }
+
+          if (t === 'li') {
+            var pad = new Array((depth || 0) + 1).join('  ');
+            var own = '';
+            var subLists = [];
+            for (var q = 0; q < n.childNodes.length; q++) {
+              var cn = n.childNodes[q];
+              if (cn.nodeType === 3) { own += cn.nodeValue; continue; }
+              if (cn.nodeType !== 1) { continue; }
+              var ct = tagOf(cn);
+              if (ct === 'ul' || ct === 'ol') { subLists.push(cn); continue; }
+              own += inline(cn);
+            }
+            var lt = clean(own);
+            if (lt) { out.push(pad + '- ' + lt.replace(/\n/g, '\n' + pad + '  ') + '\n'); }
+            for (var s = 0; s < subLists.length; s++) {
+              walk(subLists[s], out, (depth || 0) + 1);
+            }
+            continue;
+          }
+
+          if (t === 'tr') {
+            var cells = [];
+            var hasHeader = false;
+            for (var k = 0; k < n.children.length; k++) {
+              if (tagOf(n.children[k]) === 'th') { hasHeader = true; }
+              cells.push(clean(inline(n.children[k])).replace(/\n/g, ' '));
+            }
+            if (cells.join('').length) {
+              out.push('| ' + cells.join(' | ') + ' |\n');
+              if (hasHeader) {
+                out.push('|' + cells.map(function () { return ' --- '; }).join('|') + '|\n');
+              }
+            }
+            continue;
+          }
+
+          if (t === 'table') {
+            out.push('\n');
+            walk(n, out, depth);
+            out.push('\n');
+            continue;
+          }
+
+          if (BLOCK[t] || t === 'span') {
+            if (hasBlockChild(n)) {
+              walk(n, out, depth);
+            } else {
+              var pt = clean(inline(n));
+              if (pt) { out.push(pt + '\n'); }
+            }
+            continue;
+          }
+
+          walk(n, out, depth);
+        }
+      }
+
+      // Refuse to descend into anything that looks like one single message —
+      // otherwise a long reply dominates the ">=60% of text" heuristic and the
+      // rest of the conversation gets dropped silently.
+      var SINGLE_MESSAGE = /(^|[-_\s])(message|msg|bubble|markdown|prose|reply|response|answer|turn|chat-item|conversation-item)([-_\s]|$)/i;
+
+      function looksLikeOneMessage(el) {
+        var cls = (typeof el.className === 'string') ? el.className : '';
+        if (SINGLE_MESSAGE.test(cls)) { return true; }
+        if (!el.getAttribute) { return false; }
+        if (el.getAttribute('role') === 'article') { return true; }
+        if (el.hasAttribute && (el.hasAttribute('data-message-id') || el.hasAttribute('data-msg-id'))) {
+          return true;
+        }
+        var tid = el.getAttribute('data-testid') || '';
+        if (/message|chat-item/i.test(tid)) { return true; }
+        return false;
+      }
+
+      function pickRoot() {
+        var cur = document.body;
+        if (!cur) { return null; }
+        for (var depth = 0; depth < 30; depth++) {
+          var curLen = textOf(cur).length;
+          if (curLen < 200) { break; }
+          var next = null, nextLen = 0;
+          var kids = cur.children || [];
+          for (var i = 0; i < kids.length; i++) {
+            var k = kids[i];
+            var kt = tagOf(k);
+            if (SKIP[kt] || kt === 'nav' || kt === 'aside') { continue; }
+            var l = textOf(k).length;
+            if (l > nextLen) { nextLen = l; next = k; }
+          }
+          if (!next || nextLen < curLen * 0.6) { break; }
+          if (looksLikeOneMessage(next)) { break; }
+          cur = next;
+        }
+        return cur;
+      }
+
+      // Blocks are emitted with their own trailing newline and then joined with
+      // "\n\n", which over-separates consecutive list items and table rows.
+      function tighten(s) {
+        var prev;
+        for (var i = 0; i < 12; i++) {
+          prev = s;
+          s = s.replace(/(^[ \t]*- .*)$\n\n(?=^[ \t]*- )/gm, '$1\n');
+          s = s.replace(/(^[ \t]*\|.*\|)$\n\n(?=^[ \t]*\|)/gm, '$1\n');
+          if (s === prev) { break; }
+        }
+        return s;
+      }
+
+      window.__scheutieExportMarkdown = function () {
+        try {
+          var root = pickRoot() || document.body;
+          var out = [];
+          walk(root, out, 0);
+          var md = out.join('\n')
+            .replace(/[ \t]+$/gm, '')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
+          md = tighten(md);
+
+          if (md.replace(/\s/g, '').length < 40) {
+            md = clean(textOf(root));
+          }
+
+          var title = (document.title || '对话').replace(/\s*[-—]\s*ScheutieOS\s*$/, '');
+          var now = new Date();
+          function p2(x) { return (x < 10 ? '0' : '') + x; }
+          var stamp = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate())
+                    + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
+
+          var header = '# ' + title + '\n\n'
+                     + '> 来源: ' + location.href + '\n'
+                     + '> 导出时间: ' + stamp + '\n\n---\n\n';
+
+          return header + md;
+        } catch (e) {
+          return '# 导出失败\n\n' + (e && e.message ? e.message : String(e));
+        }
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+          if (window.__scheutiePendingCSS !== undefined) {
+            window.__scheutieApplyCSS(window.__scheutiePendingCSS);
+          }
+        });
+      }
+    })();
+    """;
+}

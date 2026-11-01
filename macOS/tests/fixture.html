@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="8qutmbS6LCfTpBDJy2kQpY">
+<head data-page-node-id="qR6grDdf0eEvyGWmKQu2Fo">
+  <meta charset="utf-8" data-page-node-id="FLnG7pHs7DSLFFm3jg1xEW">
+  <title>光合作用要点 - DeepSeek</title>
+</head>
+<body data-page-node-id="YVMPaFkjWcnMjlhEBvmJPS">
+  <aside class="sidebar" role="navigation" data-page-node-id="OZicXLXkN1byVuGSV94Dgj">
+    <div class="history-item" data-page-node-id="Kk7CR2xCg7Een9Y42HldcL">光合作用要点</div>
+    <div class="history-item" data-page-node-id="upSyn00GkNPXG3sNpgRLOj">Python 装饰器</div>
+    <div class="history-item" data-page-node-id="cy83Az1rWqEE8S1cV3VjzM">周报润色</div>
+  </aside>
+
+  <div class="app" data-page-node-id="bQ2nZG6fBsarQxKwVbHp05">
+    <div class="chat-container" data-page-node-id="1bnkjiGlUDqp6MzXrrObAN">
+      <div class="messages" data-page-node-id="efaQxS2x9u4JvIp0IRHCjL">
+        <div class="msg user" data-page-node-id="4jSWCHqwPakNCc0RGsD7p2">
+          <div class="content" data-page-node-id="63ltOiJuQWSQgDrFrVDfEv">
+            <p data-page-node-id="Df2UsCw9gNFpZ2DVGd1qTH">帮我把光合作用的核心要点整理一下，顺便给一段计算光反应 ATP 产量的示例代码。</p>
+          </div>
+        </div>
+
+        <div class="msg assistant" data-page-node-id="joukSraheamax6JFFUVtap">
+          <div class="content" data-page-node-id="6nOUVrD1X8ZSDeUfCgLxti">
+            <h3 data-page-node-id="EOxbbw9kszLCsYZhoYAsg0">光合作用核心要点</h3>
+            <p data-page-node-id="EUFhZ5BUrG0vSNjSUh7yw7">光合作用可拆成两个阶段，分别在<strong data-page-node-id="wxuyxpB4M8zZSmxwfDCXid">类囊体薄膜</strong>和<em data-page-node-id="E6k4Bg51bqC7VpqfM4pOhU">叶绿体基质</em>中进行。</p>
+            <ul data-page-node-id="Rxs3CqveDFpuNBRH6mUvAU">
+              <li data-page-node-id="N0WNwPZoYNbeRTIM3l9SIy">光反应：水的光解产生 O₂、NADPH 和 ATP</li>
+              <li data-page-node-id="EGVviLcc8QXvDFYqDGE6PH">暗反应：CO₂ 被固定为三碳糖，消耗 ATP 与 NADPH</li>
+              <li data-page-node-id="kTHHGpDU2HtWw6EsHxXheh">总反应式：6CO₂ + 12H₂O → C₆H₁₂O₆ + 6O₂ + 6H₂O</li>
+            </ul>
+            <p data-page-node-id="g1a6JjQ3oYFsE6tfaDaHM2">示例代码：</p>
+            <pre data-page-node-id="nbYkMTkkZcNIHUPri5pVe5"><code class="language-python" data-page-node-id="QSVEimmaQ6E318nuKblmbI">def atp_yield(photons):
+    """每 8 个光子约产生 3 个 ATP"""
+    return photons // 8 * 3
+
+print(atp_yield(64))  # 24</code></pre>
+            <p data-page-node-id="kNQNT9GkES7F2lgE3vg402">更严谨的推导可以参考 <a href="https://example.com/photosynthesis" data-page-node-id="garaLI5DEGditbf8IiUsJy">这份综述</a>，里面有完整的化学计量说明。</p>
+            <table data-page-node-id="kB4eqSqRNrceSvYBXZ9Tix">
+              <thead data-page-node-id="WTXRJ4U8obG0CkK8EENiOP">
+                <tr data-page-node-id="i1XQwzAg0ZciiZTRIayUYa"><th data-page-node-id="1R8adYB4YnsBKHcaOqrsHk">阶段</th><th data-page-node-id="XaevhFll4Cvt2iNpVGOgwY">场所</th><th data-page-node-id="UFkmb1jiPa0csnAAyFwQGs">产物</th></tr>
+              </thead>
+              <tbody data-page-node-id="7XIGiDjlysUdwoY3u1GXrg">
+                <tr data-page-node-id="BWmr5YsR7z2YdAC2DkKCaj"><td data-page-node-id="AATBlb0MlP5gBCeCvsF5uM">光反应</td><td data-page-node-id="MCkURIHFjzfJU2jlPeiYIu">类囊体薄膜</td><td data-page-node-id="NHj9J60cFr2YT3dUbDZyb8">ATP、NADPH、O₂</td></tr>
+                <tr data-page-node-id="bk2UKXXKCQsfouwL9adQzJ"><td data-page-node-id="U27hzHj53btPPvssAqXIGU">暗反应</td><td data-page-node-id="F5cZt8PxXHU64GNONpEdjL">叶绿体基质</td><td data-page-node-id="FF92dhObTvfONO6p6uXVWO">三碳糖</td></tr>
+              </tbody>
+            </table>
+            <blockquote data-page-node-id="M7XgYYNPp08H5znJFWS7GO">
+              <p data-page-node-id="ojHtl6Vozq5K4ybdKN7p7t">注意：暗反应并不需要黑暗，只是不直接依赖光照。</p>
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
