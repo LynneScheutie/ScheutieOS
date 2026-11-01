@@ -2,7 +2,7 @@
 
 把 `chat.deepseek.com` 装进一个独立窗口，顺便补上网页端最缺的一样东西：**把长对话导出来**。
 
-macOS 版 Swift + WKWebView，Windows 版 C# WinForms + WebView2。当前版本 macOS **8.4.2**、Windows **8.4.1**。
+macOS 版 Swift + WKWebView，Windows 版 C# WinForms + WebView2。两个平台统一为 **8.4.2**（build 842）。
 
 ## 为什么做这个
 

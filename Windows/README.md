@@ -1,15 +1,15 @@
 # ScheutieOS for Windows
 
-DeepSeek 网页的独立窗口客户端（WinForms + WebView2），与 macOS 版同版本号 **8.4.1**。
+DeepSeek 网页的独立窗口客户端（WinForms + WebView2），与 macOS 版同版本号 **8.4.2**。
 
-交付形态：**自解压安装 EXE** —— 双击下载得到的 `ScheutieOS-8.4.1-Setup.exe` 后，程序把自己「解压」到 `%LOCALAPPDATA%\ScheutieOS`、创建快捷方式、注册卸载信息，然后自动启动。安装完成后，双击桌面 / 开始菜单里的 ScheutieOS 即可直接运行。
+交付形态：**自解压安装 EXE** —— 双击下载得到的 `ScheutieOS-8.4.2-Setup.exe` 后，程序把自己「解压」到 `%LOCALAPPDATA%\ScheutieOS`、创建快捷方式、注册卸载信息，然后自动启动。安装完成后，双击桌面 / 开始菜单里的 ScheutieOS 即可直接运行。
 
 ## 快速开始
 
 | 步骤 | 说明 |
 | --- | --- |
 | 1. 构建 | 在任意 Windows 10+ 机器上运行 `build.ps1`（需要 PowerShell 5.1+；没有 .NET SDK 8 会自动安装，优先走 winget，无管理员权限也能装到项目目录） |
-| 2. 得到产物 | `build\ScheutieOS-8.4.1-Setup.exe`（约 90–150 MB，内置 .NET 运行时，安装后不需要任何依赖） |
+| 2. 得到产物 | `build\ScheutieOS-8.4.2-Setup.exe`（约 90–150 MB，内置 .NET 运行时，安装后不需要任何依赖） |
 | 3. 安装 | 拷到 Windows 电脑，双击 → 点「安装」→ 应用自动启动 |
 | 4. 日常使用 | 桌面 / 开始菜单的 ScheutieOS 快捷方式 |
 
@@ -40,7 +40,7 @@ DeepSeek 网页的独立窗口客户端（WinForms + WebView2），与 macOS 版
 | 下载 | 自动存到「下载」文件夹 |
 | 外链 | 非 deepseek.com 的链接与新窗口请求交给系统默认浏览器 |
 | 全屏 | F11 |
-| 关于窗口 | 手绘渐变卡片：图标、版本徽章（8.4.1 build 841）、开发者 Lynne Scheutie & Wanchen Qian、A quick launcher for DeepSeek |
+| 关于窗口 | 手绘渐变卡片：图标、版本徽章（8.4.2 build 842）、开发者 Lynne Scheutie & Wanchen Qian、A quick launcher for DeepSeek |
 | 卸载 | 帮助 → 卸载；已注册到系统「应用和功能」，可选是否保留登录数据 |
 
 ## 目录与文件

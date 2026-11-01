@@ -28,8 +28,8 @@ namespace ScheutieOS;
 internal static class Program
 {
     public const string AppName = "ScheutieOS";
-    public const string VersionText = "8.4.1";
-    public const string BuildText = "841";
+    public const string VersionText = "8.4.2";
+    public const string BuildText = "842";
     public const string Developer = "Lynne Scheutie & Wanchen Qian";
     public const string Tagline = "A quick launcher for DeepSeek";
     public const string StartUrl = "https://chat.deepseek.com/";

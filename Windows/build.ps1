@@ -102,7 +102,7 @@ if (-not (Test-Path $appExe)) { throw "publish output missing: $appExe" }
 
 # Read the version straight out of the csproj so the name stays in sync.
 $csproj = Get-Content (Join-Path $Root "src\ScheutieOS.csproj") -Raw
-$version = "8.4.1"
+$version = "8.4.2"
 if ($csproj -match '<FileVersion>([^<]+)</FileVersion>') { $version = $Matches[1] }
 
 $setupExe = Join-Path $BuildDir ("ScheutieOS-{0}-Setup.exe" -f $version)

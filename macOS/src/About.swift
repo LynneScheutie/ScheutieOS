@@ -10,8 +10,8 @@
 
 import Cocoa
 
-private let kVersion   = "8.4.1"
-private let kBuild     = "841"
+private let kVersion   = "8.4.2"
+private let kBuild     = "842"
 private let kDeveloper = "Lynne Scheutie & Wanchen Qian"
 private let kTagline   = "A quick launcher for DeepSeek"
 private let kSite      = "chat.deepseek.com"
